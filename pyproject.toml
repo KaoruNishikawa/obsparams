@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "github_files_check"
+version = "0.1.0"
+description = ""
+authors = ["Kaoru Nishikawa <k.nishikawa@a.phys.nayoya-u.ac.jp>"]
+
+[tool.poetry.dependencies]
+python = "~3.7"
+PyGithub = "^1.53"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = "^20.8b1"
+flake8 = "^3.8.4"
+ipykernel = "^5.3.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
