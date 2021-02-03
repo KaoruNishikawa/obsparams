@@ -362,7 +362,7 @@ class obsfile_params_check(object):
             return []
         code = self.read_file(path)
         path = path.split("/", 2)
-        user, repository, file_path = path[0], path[1], path[2]
+        user, repository, file_path = path[0], path[1], path[2]  # noqa: F841
         root = ET.fromstring(code)
         elements = [elem for elem in root]
         nodes = []
