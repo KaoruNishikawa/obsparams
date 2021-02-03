@@ -13,7 +13,6 @@ import re
 
 
 class obsfile_params_check(object):
-
     def __init__(self, token):
         self.g = Github(token)
 
@@ -68,9 +67,7 @@ class obsfile_params_check(object):
             try:
                 user, repository, directory = path[0], path[1], ""
             except IndexError:
-                raise IndexError(
-                    "'username/repository' must be included in the path."
-                )
+                raise IndexError("'username/repository' must be included in the path.")
         repo = self.g.get_repo(f"{user}/" + repository)
         contents = repo.get_contents(directory)
         if not isinstance(contents, list):
@@ -87,8 +84,7 @@ class obsfile_params_check(object):
     def get_file_dict(self, path):
         self.list_files(path)
         return [
-            {content.path.split("/")[-1]: content.path}
-            for content in self.__content
+            {content.path.split("/")[-1]: content.path} for content in self.__content
         ]
 
     def read_file(self, path):
@@ -187,9 +183,7 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(
-            f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content
-        )
+        params = re.findall(f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content)
         params = list(set(params))
         return sorted(params)
 
@@ -197,20 +191,14 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(
-            f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content
-        )
+        params = re.findall(f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content)
         if not isinstance(params, list):
             params = [params]
-        all_params = re.findall(
-            f"{trigger[0]}(.*?).*?{trigger[1]}", content
-        )
+        all_params = re.findall(f"{trigger[0]}(.*?).*?{trigger[1]}", content)
         true_params = []
         for param in all_params:
             if param not in params:
-                param_ = re.findall(
-                    f"{param} = ['\"](.*?)['\"]", content
-                )
+                param_ = re.findall(f"{param} = ['\"](.*?)['\"]", content)
                 try:
                     true_params.append(param_[0])
                 except IndexError:
@@ -259,9 +247,7 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(
-            f"{trigger[0]}['\"](.*?)['\"]{trigger[1]}", content
-        )
+        params = re.findall(f"{trigger[0]}['\"](.*?)['\"]{trigger[1]}", content)
         all_params = re.findall(f"{trigger[0]}(.*?){trigger[1]}", content)
         if ignore_import:
             content = re.sub(r".*?import.*?\n", r"\n", content)
@@ -439,9 +425,7 @@ class obsfile_params_check(object):
         for param in params_used:
             if param not in params_declared:
                 not_declared.append(param)
-        ret = {
-            "used": used, "not_used": not_used, "not_declared": not_declared
-        }
+        ret = {"used": used, "not_used": not_used, "not_declared": not_declared}
         return ret
 
 
