@@ -29,6 +29,6 @@ jobs:
       - name: Lint by Flake8 
         run: poetry run flake8 test scripts
       - name: Format by Black
-        run: poetry run black --check test scripts
+        run: poetry run black --line-length 79 --check test scripts
       - name: Test by pytest
         run: poetry run pytest -v test --token ${{ secrets.GITHUB_TOKEN }}
