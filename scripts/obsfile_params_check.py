@@ -1,6 +1,7 @@
 """Obtain codes from GitHub, and analyse it.
 
-This module is a collection of tools to list parameters or certain expressions used/declared in .py, .launch, and .obs codes.
+This module is a collection of tools to list parameters or certain
+expressions used/declared in .py, .launch, and .obs codes.
 
 """
 
@@ -39,19 +40,19 @@ class obsfile_params_check(object):
         return [repo.name for repo in repos]
 
     def list_files(self, path):
-        """Get list of files in specified repository/directory and its sub-directories.
+        """Get list of files in specified repository or directory.
 
         Parameters
         ----------
         path : str
-            Github repository name or its directory path, with no whitespace, case
-            insensitive.
+            Github repository name or its directory path, with no
+            whitespace, case insensitive.
 
         Return
         ------
         list
-            List of file names. All files in child directories are included, but
-            directory paths are NOT included.
+            List of file names. All files in child directories are
+            included, but directory paths are NOT included.
 
         Examples
         --------
@@ -67,7 +68,9 @@ class obsfile_params_check(object):
             try:
                 user, repository, directory = path[0], path[1], ""
             except IndexError:
-                raise IndexError("'username/repository' must be included in the path.")
+                raise IndexError(
+                    "'username/repository' must be included in the path."
+                )
         repo = self.g.get_repo(f"{user}/" + repository)
         contents = repo.get_contents(directory)
         if not isinstance(contents, list):
@@ -84,7 +87,8 @@ class obsfile_params_check(object):
     def get_file_dict(self, path):
         self.list_files(path)
         return [
-            {content.path.split("/")[-1]: content.path} for content in self.__content
+            {content.path.split("/")[-1]: content.path}
+            for content in self.__content
         ]
 
     def read_file(self, path):
@@ -155,12 +159,13 @@ class obsfile_params_check(object):
         Parameters
         ----------
         trigger : list of str
-            Prefix and surfix to the param reference, such as dictionary expression.
+            Prefix and surfix to the param reference, such as dictionary
+            expression.
         path : str
             Github path to the obsfile, starting with repositpry name.
         already_escaped : bool
-            Whether the trigger parameters are given with consideration of escape
-            sequence or not.
+            Whether the trigger parameters are given with consideration
+            of escape sequence or not.
 
         Return
         ------
@@ -182,7 +187,9 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content)
+        params = re.findall(
+            f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content
+        )
         params = list(set(params))
         return sorted(params)
 
@@ -190,14 +197,20 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content)
+        params = re.findall(
+            f"{trigger[0]}['\"](.*?)['\"].*?{trigger[1]}", content
+        )
         if not isinstance(params, list):
             params = [params]
-        all_params = re.findall(f"{trigger[0]}(.*?).*?{trigger[1]}", content)
+        all_params = re.findall(
+            f"{trigger[0]}(.*?).*?{trigger[1]}", content
+        )
         true_params = []
         for param in all_params:
             if param not in params:
-                param_ = re.findall(f"{param} = ['\"](.*?)['\"]", content)
+                param_ = re.findall(
+                    f"{param} = ['\"](.*?)['\"]", content
+                )
                 try:
                     true_params.append(param_[0])
                 except IndexError:
@@ -215,15 +228,16 @@ class obsfile_params_check(object):
         Parameters
         ----------
         trigger : list of str
-            Prefix and surfix to the param reference, such as dictionary expression.
+            Prefix and surfix to the param reference, such as dictionary
+            expression.
         path : str
             Github path to the obsfile, starting with repositpry name.
         already_escaped : bool
-            Whether the trigger parameters are given with consideration of escape
-            sequence or not.
+            Whether the trigger parameters are given with consideration
+            of escape sequence or not.
         ignore_import : bool
-            Whether to ignore (from)import lines, to avoid mis-detection caused by
-            import errors.
+            Whether to ignore (from)import lines, to avoid mis-detection
+            caused by import errors.
 
         Return
         ------
@@ -245,7 +259,9 @@ class obsfile_params_check(object):
         content = self.read_file(path)
         if not already_escaped:
             trigger = [re.escape(trig) for trig in trigger]
-        params = re.findall(f"{trigger[0]}['\"](.*?)['\"]{trigger[1]}", content)
+        params = re.findall(
+            f"{trigger[0]}['\"](.*?)['\"]{trigger[1]}", content
+        )
         all_params = re.findall(f"{trigger[0]}(.*?){trigger[1]}", content)
         if ignore_import:
             content = re.sub(r".*?import.*?\n", r"\n", content)
@@ -281,12 +297,12 @@ class obsfile_params_check(object):
 
         Notes
         -----
-        This is staticmethod, so no need to instantiate the class to use this.
-        Some output will show up while exec-ing the content, but this method RETURNs
-        evaluated parameter only.
-        By restriction of making this document, 'content' is given as escaped format. It
-        will cause an error when running this method, so input 'content' without
-        escaping any letter.
+        This is staticmethod, so no need to instantiate the class to use
+        this. Some output will show up while executing the content, but
+        this method RETURNs evaluated parameter only.
+        By restriction of making this document, 'content' is given in
+        escaped format. It will cause an error when running this method,
+        so input 'content' without escaping any letter.
 
         Examples
         --------
@@ -325,21 +341,22 @@ class obsfile_params_check(object):
     def list_from_launch(self, path, path_dict):
         """List all nodes launched by the launch file.
 
-        All nodes including same node with different name, which are launched by the
-        launch file are listed.
+        All nodes including same node with different name, which are
+        launched by the launch file are listed.
 
         Parameters
         ----------
         path : str
             Github path to the launch file.
         path_dict : dict
-            Dictionary that relates file name to its full path, generated by
-            obsfile_params_check().get_file_dict(path)
+            Dictionary that relates file name to its full path,
+            generated by `obsfile_params_check().get_file_dict(path)`
 
         Return
         ------
         list of dict
-            List of dictionary which contains node filename and remap rules.
+            List of dictionary which contains node filename and remap
+            rules.
         """
         if path[-7:] != ".launch":
             return []
@@ -400,8 +417,9 @@ class obsfile_params_check(object):
         Return
         ------
         dict of list
-            'used' for parameters declared and used, 'not_used' for parameters declared
-            but not used, and 'not_declared' for parameters not declared.
+            'used' for parameters declared and used, 'not_used' for
+            parameters declared but not used, and 'not_declared' for
+            parameters not declared.
 
         Examples
         --------
@@ -421,7 +439,10 @@ class obsfile_params_check(object):
         for param in params_used:
             if param not in params_declared:
                 not_declared.append(param)
-        return {"used": used, "not_used": not_used, "not_declared": not_declared}
+        ret = {
+            "used": used, "not_used": not_used, "not_declared": not_declared
+        }
+        return ret
 
 
 if __name__ == "__main__":
